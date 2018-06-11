@@ -1,28 +1,33 @@
-import fs from 'fs';
-const settingLocation = '~/.rachio-ditch-sensor/settings.json';
+import fs from "fs";
+const settingFolder = process.env.HOME + "/.rachio-ditch-sensor";
+const settingLocation =
+  process.env.HOME + "/.rachio-ditch-sensor/settings.json";
 
-class Settings{
-    constructor(){
-        this.settings = {};
-        if(!fs.exists(settingLocation)){
-            fs.copyFileSync('./settings.json',settingLocation);
-        }
-        this.settings = JSON.parse(fs.readFileSync(settingLocation, 'utf8'));
+class Settings {
+  constructor() {
+    this.settings = {};
+    if (!fs.existsSync(settingLocation)) {
+      if (!fs.existsSync(settingFolder)) {
+        fs.mkdirSync(settingFolder);
+      }
+      if (fs.existsSync(__dirname + "/settings.json")) {
+        fs.copyFileSync(__dirname + "/settings.json", settingLocation);
+      }
     }
+    this.settings = JSON.parse(fs.readFileSync(settingLocation, "utf8"));
+  }
 
-    set = (key,value) => {
-        this.settings[key] = value;
-    }
+  set(key, value) {
+    this.settings[key] = value;
+  }
 
-    get = (key) => {
-        return this.settings[key]
-    }
+  get(key) {
+    return this.settings[key];
+  }
 
-    commit = () => {
-        fs.writeFile(settingLocation,JSON.stringify(this.settings));
-    }
-    
+  commit() {
+    fs.writeFile(settingLocation, JSON.stringify(this.settings));
+  }
 }
-
 
 export default Settings;
