@@ -81,7 +81,7 @@ class RachioDitchSensorHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.send_response(200)
             self.end_headers()
-            self.wfile.write(b"{\"adcValue\":" + adc_value +
+            self.wfile.write(b"{\"adcValue\":" + str(adc_value) +
                              ", \"percent\":\"" + str("%.1f" % (adc_value/400.*100))+"%\"}")
         except ValueError, Argument:
             self.send_response(500)
