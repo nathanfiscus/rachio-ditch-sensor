@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import time
 import SimpleHTTPServer
 import SocketServer
+import simplejson as json
 
 PORT = 8080
 
@@ -78,13 +79,13 @@ class RachioDitchSensorHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         try:
             adc_value = readadc(photo_ch, SPICLK, SPIMOSI, SPIMISO, SPICS)
-            print "{\"adcValue\":" + str(adc_value) + ", \"percent\":\"" + \
-                str("%.1f" % (adc_value/400.*100))+"%\"}"
-            self.send_header("Content-Type", "application/json; charset=UTF-8")
+            print(json.dump({"adcValue": adc_value,
+                             "percent": adc_value/400.*100}))
             self.send_response(200)
+            self.send_header('Content-Type', 'application/json')
             self.end_headers()
-            self.wfile.write("{\"adcValue\":" + str(adc_value) +
-                             ", \"percent\":\"" + str("%.1f" % (adc_value/400.*100))+"%\"}")
+            self.wfile.write(
+                json.dump({"adcValue": adc_value, "percent": adc_value/400.*100}))
 
         except ValueError, Argument:
             self.send_response(500)
