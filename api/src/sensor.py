@@ -79,13 +79,11 @@ class RachioDitchSensorHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
     def do_GET(self):
         try:
             adc_value = readadc(photo_ch, SPICLK, SPIMOSI, SPIMISO, SPICS)
-            print(json.dumps({"adcValue": adc_value,
-                              "percent": adc_value/400.*100}))
             self.send_response(200)
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(
-                json.dumps({"adcValue": adc_value, "percent": adc_value/400.*100}))
+                json.dumps({"adcValue": adc_value, "percent": adc_value/488.*100}))
 
         except ValueError, Argument:
             self.send_response(500)
