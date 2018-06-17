@@ -1,5 +1,10 @@
 import React, { Component } from "react";
 import { CircularProgress, Typography } from "@material-ui/core";
+import axios from "axios";
+
+const axiosClient = axios.create({
+  baseURL: window.location.protocol + "//" + window.location.hostname + ":9001"
+});
 
 class Home extends Component {
   constructor(props) {
@@ -11,12 +16,19 @@ class Home extends Component {
     };
   }
   componentDidMount() {
-    setTimeout(() => {
-      this.setState({ adcValue: 150, loading: false });
-      setTimeout(() => {
-        this.setState({ adcValue: 450 });
-      }, 2000);
-    }, 2000);
+    this.setState({
+      interval: setInterval(() => {
+        axiosClient.get("/sensor").then(response => {
+          this.setState({
+            loading: false,
+            adcValue: response.data.adcValue
+          });
+        });
+      }, 1000)
+    });
+  }
+  componentWillUnmount() {
+    clearInterval(this.state.interval);
   }
   render() {
     return (
@@ -52,16 +64,16 @@ class Home extends Component {
                 <Typography variant="display3">
                   {this.state.loading
                     ? "--"
-                    : Math.round((this.state.adcValue / 450) * 100) + "%"}
+                    : Math.round((this.state.adcValue / 545) * 100) + "%"}
                 </Typography>
-                <Typography variant="subheading">Ditch Level</Typography>
+                <Typography variant="subheading">Water Detection</Typography>
               </div>
             </div>
             <div style={{ position: "absolute" }}>
               <CircularProgress
                 size={300}
                 thickness={5}
-                value={Math.round((this.state.adcValue / 450) * 100)}
+                value={Math.round((this.state.adcValue / 545) * 100)}
                 variant={this.state.loading ? "indeterminate" : "static"}
                 style={{
                   position: "absolute",

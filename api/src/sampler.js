@@ -3,7 +3,8 @@ import axios from "axios";
 import RachioClient from "rachio";
 let lastCheck = "";
 
-setTimeout(() => {
+setInterval(() => {
+  console.log("Taking Water Sample!");
   const settings = new Settings();
   const apiKey = settings.get("rachioAPIKey");
   const controller = settings.get("rachioController");
@@ -14,21 +15,27 @@ setTimeout(() => {
       .get("http://localhost:8080/")
       .then(response => {
         const rachio = new RachioClient(apiKey);
-        const device = rachio.getDevice(controller);
-        if (response.data.adcValue > threshold) {
-          // Ditch is Full
-          if (device.status !== "ONLINE") {
-            device.standbyOff();
+        const device = rachio.getDevice(controller).then(device => {
+          if (response.data.adcValue > threshold) {
+            // Ditch is Full
+            console.log(device.status);
+            //console.log(device);
+            if (!device.on) {
+              device.standbyOff();
+              console.log("Bringing Rachio out of Stand-By");
+            }
+          } else {
+            //Ditch is Empty
+            if (device.isWatering()) {
+              device.stopWater();
+              console.log("Stopping Water");
+            }
+            if (device.on) {
+              device.standbyOn();
+              console.log("Putting Rachio in Stand-By");
+            }
           }
-        } else {
-          //Ditch is Empty
-          if (device.isWatering()) {
-            device.stopWater();
-          }
-          if (device.status === "ONLINE") {
-            device.standbyOn();
-          }
-        }
+        });
       })
       .catch(ex => {
         console.log(ex);
@@ -38,4 +45,4 @@ setTimeout(() => {
         }
       });
   }
-}, 120000);
+}, 240000);

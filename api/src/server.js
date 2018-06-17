@@ -1,42 +1,43 @@
-import 'babel-polyfill';
-import express from 'express';
-import helmet from 'helmet';
-import cors from 'cors';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import methodOverride from 'method-override';
-import morgan from 'morgan';
-import passport from 'passport';
-import {Strategy as LocalStrategy} from 'passport-local'
-import ensureLogin from 'connect-ensure-login'
+import "babel-polyfill";
+import express from "express";
+import helmet from "helmet";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import bodyParser from "body-parser";
+import methodOverride from "method-override";
+import morgan from "morgan";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import ensureLogin from "connect-ensure-login";
 
-import config from './config';
-import Rachio from './services/rachio';
-import Sensor from './services/sensor';
+import config from "./config";
+import Rachio from "./services/rachio";
+import Sensor from "./services/sensor";
 
-import './sampler';
+import "./sampler";
 
 const app = express();
 
-
-passport.use(new LocalStrategy(
-    function(username, password, done) {
-        if(username === 'admin' && password === 'test'){
-      return done(null, false, { message: 'Incorrect password.' });
-        }else{
-          return done(null, {username:'admin'});
-        }
+passport.use(
+  new LocalStrategy(function(username, password, done) {
+    if (username === "admin" && password === "test") {
+      return done(null, false, { message: "Incorrect password." });
+    } else {
+      return done(null, { username: "admin" });
     }
-));
+  })
+);
 
 passport.serializeUser(function(user, cb) {
-    cb(null, 'admin');
-  });
-  
-  passport.deserializeUser(function(id, cb) {
-    if(id !== 'admin'){return cb(err);}
-    cb(null, {username:'admin'});
-  });
+  cb(null, "admin");
+});
+
+passport.deserializeUser(function(id, cb) {
+  if (id !== "admin") {
+    return cb(err);
+  }
+  cb(null, { username: "admin" });
+});
 
 //
 // Middleware
@@ -59,32 +60,39 @@ app.use(bodyParser.json());
 app.use(methodOverride());
 // HTTP request logger middleware for node.js
 // https://github.com/expressjs/morgan
-app.use(morgan(config.env === 'development' ? 'dev' : 'combined'));
+app.use(morgan(config.env === "development" ? "dev" : "combined"));
 
-app.set('trust proxy', true);
-app.set('trust proxy', 'loopback');
+app.set("trust proxy", true);
+app.set("trust proxy", "loopback");
 
-app.use(require('express-session')({ secret: 'keyboard cat', resave: false, saveUninitialized: false }));
+app.use(
+  require("express-session")({
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false
+  })
+);
 
 // Initialize Passport and restore authentication state, if any, from the
 // session.
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.post('/login',
-  passport.authenticate('local', { successRedirect: '/',
-                                   failureRedirect: '/login',
-                                   failureFlash: true })
+app.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true
+  })
 );
 
-app.use('/rachio', ensureLogin.ensureLoggedIn(), Rachio);
-app.use('/sensor', ensureLogin.ensureLoggedIn(), Sensor);
+app.use("/rachio", Rachio);
+app.use("/sensor", Sensor);
 
-app.get('/', (req, res) => {
-  res.send('Rachio Ditch Sensor');
+app.get("/", (req, res) => {
+  res.send("Rachio Ditch Sensor");
 });
-
-
 
 app.listen(config.port, () => {
   console.log(`Rachio Ditch Sensor API listening on port ${config.port}!`); // eslint-disable-line no-console

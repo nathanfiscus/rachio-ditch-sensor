@@ -17,7 +17,7 @@ class Settings {
     this.settings = JSON.parse(fs.readFileSync(settingLocation, "utf8"));
   }
 
-  set(key, value) {
+  write(key, value) {
     this.settings[key] = value;
   }
 
@@ -26,7 +26,7 @@ class Settings {
   }
 
   commit() {
-    fs.writeFile(settingLocation, JSON.stringify(this.settings));
+    fs.writeFileSync(settingLocation, JSON.stringify(this.settings));
   }
 }
 
