@@ -120,14 +120,6 @@ class Config extends React.Component {
           </Button>
         </div>
         <div style={{ width: "100%", maxWidth: "300px" }}>
-          <TextField
-            value={this.state.threshold}
-            onChange={this.onThresholdChange}
-            label="Moisture Threshold"
-            fullWidth
-          />
-        </div>
-        <div style={{ width: "100%", maxWidth: "300px" }}>
           <Button fullWidth onClick={this.save}>
             Save
           </Button>

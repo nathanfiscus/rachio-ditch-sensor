@@ -1,5 +1,7 @@
 import React, { Component } from "react";
 import { CircularProgress, Typography } from "@material-ui/core";
+import CheckIcon from "@material-ui/icons/CheckIcon";
+import CloseIcon from "@material-ui/icons/CloseIcon";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -12,7 +14,8 @@ class Home extends Component {
     this.state = {
       loading: true,
       threshold: 175,
-      adcValue: 0
+      adcValue: 0,
+      hasWater: false
     };
   }
   componentDidMount() {
@@ -21,10 +24,11 @@ class Home extends Component {
         axiosClient.get("/sensor").then(response => {
           this.setState({
             loading: false,
-            adcValue: response.data.adcValue
+            adcValue: response.data.adcValue,
+            hasWater: response.data.hasWater
           });
         });
-      }, 1000)
+      }, 10000)
     });
   }
   componentWillUnmount() {
@@ -62,9 +66,13 @@ class Home extends Component {
             >
               <div style={{ flex: "1 1 100%" }}>
                 <Typography variant="display3">
-                  {this.state.loading
-                    ? "--"
-                    : Math.round((this.state.adcValue / 545) * 100) + "%"}
+                  {this.state.loading ? (
+                    "--"
+                  ) : this.state.hasWater ? (
+                    <CheckIcon />
+                  ) : (
+                    <CloseIcon />
+                  )}
                 </Typography>
                 <Typography variant="subheading">Water Detection</Typography>
               </div>
@@ -73,16 +81,16 @@ class Home extends Component {
               <CircularProgress
                 size={300}
                 thickness={5}
-                value={Math.round((this.state.adcValue / 545) * 100)}
+                value={100}
                 variant={this.state.loading ? "indeterminate" : "static"}
                 style={{
                   position: "absolute",
                   zIndex: "2",
                   color: this.state.loading
                     ? "#1565C0"
-                    : this.state.adcValue >= this.state.threshold
-                      ? "#4CAF50"
-                      : "#e53935"
+                    : this.state.hasWater
+                    ? "#4CAF50"
+                    : "#e53935"
                 }}
               />
               <CircularProgress

@@ -83,7 +83,7 @@ class RachioDitchSensorHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
             self.send_header('Content-Type', 'application/json')
             self.end_headers()
             self.wfile.write(
-                json.dumps({"adcValue": adc_value, "percent": adc_value/488.*100}))
+                json.dumps({"adcValue": adc_value, "hasWater": 1023.-adc_value > 0}))
 
         except ValueError, Argument:
             self.send_response(500)

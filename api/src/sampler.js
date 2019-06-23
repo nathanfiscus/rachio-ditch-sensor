@@ -16,7 +16,7 @@ setInterval(() => {
       .then(response => {
         const rachio = new RachioClient(apiKey);
         const device = rachio.getDevice(controller).then(device => {
-          if (response.data.adcValue > threshold) {
+          if (response.data.hasWater) {
             // Ditch is Full
             console.log(device.status);
             //console.log(device);
