@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { CircularProgress, Typography } from "@material-ui/core";
 import CheckIcon from "@material-ui/icons/Check";
-import CloseIcon from "@material-ui/icons/Delete";
+import CloseIcon from "@material-ui/icons/Close";
 import axios from "axios";
 
 const axiosClient = axios.create({
@@ -69,9 +69,13 @@ class Home extends Component {
                   {this.state.loading ? (
                     "--"
                   ) : this.state.hasWater ? (
-                    <CheckIcon />
+                    <CheckIcon
+                      style={{ fontSize: "142px", color: "#4CAF50" }}
+                    />
                   ) : (
-                    <CloseIcon />
+                    <CloseIcon
+                      style={{ fontSize: "142px", color: "#e53935" }}
+                    />
                   )}
                 </Typography>
               </div>
