@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { CircularProgress, Typography } from "@material-ui/core";
-import CheckIcon from "@material-ui/icons/CheckIcon";
-import CloseIcon from "@material-ui/icons/CloseIcon";
+import CheckIcon from "@material-ui/icons/Check";
+import CloseIcon from "@material-ui/icons/Delete";
 import axios from "axios";
 
 const axiosClient = axios.create({
