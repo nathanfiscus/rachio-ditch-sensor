@@ -74,7 +74,6 @@ class Home extends Component {
                     <CloseIcon />
                   )}
                 </Typography>
-                <Typography variant="subheading">Water Detection</Typography>
               </div>
             </div>
             <div style={{ position: "absolute" }}>
